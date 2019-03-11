@@ -41,21 +41,23 @@ async function sendToS3(file, name) {
   }
 }
 
+function callback(error, stats) {
+  const [{ _value }, map] = stats.compilation.assets['Bsale.js'].children
+  console.log(stats.toString({ colors: true }))
+  sendToS3(`${_value}${map}`, 'Bsale.js')
+  sendToS3(stats.compilation.assets['Bsale.js.map']._value, 'Bsale.js.map')
+  if (prod) {
+    // TO DO: update templates version
+  }
+}
+
 if (!prod) {
   const options = {
     aggregateTimeout: 300,
     poll: undefined
   }
-  compiler.watch(options, (error, stats) => {
-    console.log(stats.toString({ colors: true }))
-    sendToS3(stats.compilation.assets['Bsale.js'].children[0]._value, 'Bsale.js')
-    sendToS3(stats.compilation.assets['Bsale.js.map']._value, 'Bsale.js.map')
-  })
+  compiler.watch(options, callback)
 }
 else {
-  compiler.run((error, stats) => {
-    console.log(stats.toString({ colors: true }))
-    sendToS3(stats.compilation.assets['Bsale.js']._value, 'Bsale.js')
-    // TO DO: update templates version
-  })
+  compiler.run(callback)
 }

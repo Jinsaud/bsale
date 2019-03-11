@@ -14,5 +14,5 @@ module.exports = env => ({
       loader: 'babel-loader'
     }]
   },
-  devtool: env === 'development' ? 'source-map' : undefined
+  devtool: 'source-map'
 })
