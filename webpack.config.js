@@ -1,6 +1,7 @@
 const path = require('path')
 
-module.exports = {
+module.exports = env => ({
+  mode: env,
   entry: './src',
   output: {
     filename: 'Bsale.js',
@@ -12,5 +13,6 @@ module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader'
     }]
-  }
-}
+  },
+  devtool: env === 'development' ? 'source-map' : undefined
+})
