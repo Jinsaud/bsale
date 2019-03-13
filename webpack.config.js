@@ -1,7 +1,7 @@
 const path = require('path')
 
-module.exports = env => ({
-  mode: env,
+module.exports = mode => ({
+  mode,
   entry: './src',
   output: {
     filename: 'Bsale.js',

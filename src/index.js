@@ -1,8 +1,13 @@
+import 'promise/polyfill'
+import 'whatwg-fetch'
 import Product from './Product'
 import Collection from './Collection'
 import Cart from './Cart'
 
 const config = JSON.parse(document.head.querySelector('[name="bs-config"]').content)
+const cart = new Cart
+const dev = location.hostname.indexOf('bsalemarket.com') !== -1 || undefined
+const version = '1.0.0'
 
 function tagmanager(event) {
   if (typeof dataLayer !== 'undefined') {
@@ -17,10 +22,12 @@ function pixel(event, data, custom) {
 }
 
 window.Bsale = {
-  config,
   tagmanager,
   pixel,
+  cart,
   Product,
   Collection,
-  Cart
+  config,
+  dev,
+  version
 }

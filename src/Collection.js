@@ -1,1 +1,8 @@
-export default class Collection {}
+export default class Collection {
+
+  constructor() {}
+
+  getJSON() {}
+
+  getHTML() {}
+}

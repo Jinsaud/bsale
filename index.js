@@ -44,7 +44,7 @@ async function sendToS3(file, name) {
 function callback(error, stats) {
   const [{ _value }, map] = stats.compilation.assets['Bsale.js'].children
   console.log(stats.toString({ colors: true }))
-  sendToS3(`${_value}${map}`, 'Bsale.js')
+  sendToS3(_value + map, 'Bsale.js')
   sendToS3(stats.compilation.assets['Bsale.js.map']._value, 'Bsale.js.map')
   if (prod) {
     // TO DO: update templates version

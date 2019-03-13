@@ -5,7 +5,9 @@ export default class Product {
     this.quantity = quantity
   }
 
-  get() {}
+  getJSON() {}
+
+  getHTML() {}
 
   update() {}
 }

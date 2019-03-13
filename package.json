@@ -13,5 +13,9 @@
     "babel-loader": "^8.0.5",
     "node-fetch": "^2.3.0",
     "webpack": "^4.29.6"
+  },
+  "dependencies": {
+    "promise": "^8.0.2",
+    "whatwg-fetch": "^3.0.0"
   }
 }
