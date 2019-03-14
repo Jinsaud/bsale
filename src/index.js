@@ -4,30 +4,37 @@ import Product from './Product'
 import Collection from './Collection'
 import Cart from './Cart'
 
-const config = JSON.parse(document.head.querySelector('[name="bs-config"]').content)
-const cart = new Cart
-const dev = location.hostname.indexOf('bsalemarket.com') !== -1 || undefined
-const version = '1.0.0'
+class Bsale {
 
-function tagmanager(event) {
-  if (typeof dataLayer !== 'undefined') {
-    dataLayer.push(event)
+  constructor({ config, products, collections }) {
+    this.config = config
+    this.cart = new Cart
+    this.version = '1.0.0'
+    if (products.length) {
+      this.products = products.map(product => new Product(product))
+    }
+    if (collections.length) {
+      this.collections = collections.map(collection => new Collection(collection))
+    }
+    if (location.hostname.indexOf('bsalemarket.com') !== -1) {
+      this.dev = true
+    }
+    delete window.INITIAL
+  }
+
+  tagmanager(event) {
+    if (typeof dataLayer !== 'undefined') {
+      dataLayer.push(event)
+      this.dev && console.log('Tagmanager:', event)
+    }
+  }
+
+  pixel(event, data, custom) {
+    if (typeof fbq !== 'undefined') {
+      fbq(custom ? 'trackCustom' : 'track', event, data)
+      this.dev && console.log('Pixel:', { event: event, data: data })
+    }
   }
 }
 
-function pixel(event, data, custom) {
-  if (typeof fbq !== 'undefined') {
-    fbq(custom ? 'trackCustom' : 'track', event, data)
-  }
-}
-
-window.Bsale = {
-  tagmanager,
-  pixel,
-  cart,
-  Product,
-  Collection,
-  config,
-  dev,
-  version
-}
+window.Bsale = new Bsale(window.INITIAL)

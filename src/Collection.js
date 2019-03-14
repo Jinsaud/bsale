@@ -1,8 +1,12 @@
+import Product from './Product'
+
 export default class Collection {
 
-  constructor() {}
+  constructor(products) {
+    this.products = products.map(product => new Product({ product }))
+  }
 
-  getJSON() {}
+  getJSON() { }
 
-  getHTML() {}
+  getHTML() { }
 }

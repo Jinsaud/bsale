@@ -1,4 +1,5 @@
 import Product from './Product'
+import Variant from './Variant'
 
 export default class Cart {
 
@@ -19,57 +20,77 @@ export default class Cart {
         this.legacy = data
       })
       .catch(error => {
-        console.log(error.message)
+        console.error(error)
       })
   }
 
-  add(product) {
-    if (product instanceof Product) {
-      const { id, quantity } = product
-      return fetch(`/product/create/${id}?q=${quantity}`)
+  add(item, quantity) {
+    const variant = item instanceof Variant
+    if (variant || item instanceof Product) {
+      return fetch(`/product/create/${item.id}?q=${quantity}`)
         .then(res => res.json())
-        .then(({ success, status, message, total }) => {
+        .then(({ success, status, message }) => {
           if (status === 'ok') {
+            const newItem = {
+              [variant ? 'variant' : 'product']: item,
+              quantity
+            }
             this.items = [
               ...this.items,
-              product
+              newItem
             ]
-            return this
+            return newItem
           }
-          throw new Error('D:')
+          else {
+            throw new Error(message)
+          }
         })
     }
-    return Promise.reject('product debe ser una instancia de Bsale.Product')
+    return Promise.reject('item debe ser una instancia de Bsale.Variant o Bsale.Product')
   }
 
-  update(productId, newQuantity) {
-    const [{ id }] = this.items.filter(product => product.id === productId)
-    return fetch(`/cart/update_detail/${id}?q=${newQuantity}`)
-      .then(res => res.json())
-      .then(data => {
-        // if (data.success) {
-        this.items = this.items.map(product => {
-          if (product.id === id) {
-            return new Bsale.Product(id, newQuantity)
+  update(item, quantity) {
+    if (this.items.indexOf(item) !== -1) {
+      const { id } = item
+      return fetch(`/cart/update_detail/${id}?q=${quantity}`)
+        .then(res => res.json())
+        .then(({ success, status, message }) => {
+          if (status === 'ok') {
+            const updatedItem = {
+              [item instanceof Variant ? 'variant' : 'product']: item,
+              quantity
+            }
+            this.items = this.items.map(item => {
+              if (item.id === id) {
+                return updatedItem
+              }
+              return item
+            })
+            return updatedItem
           }
-          return product
+          else {
+            throw new Error(message)
+          }
         })
-        return data
-        // }
-        // throw new Error('D:')
-      })
+    }
+    return Promise.reject('item no existe en el carro')
   }
 
-  remove(productId) {
-    const [{ id }] = this.items.filter(product => product.id === productId)
-    return fetch(`/cart/delete_detail/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        // if (data.success) {
-        this.items = this.items.filter(product => product)
-        return data
-        // }
-        // throw new Error('D:')
-      })
+  remove(item) {
+    if (this.items.indexOf(item) !== -1) {
+      const { id } = item
+      return fetch(`/cart/delete_detail/${id}`)
+        .then(res => res.json())
+        .then(({ success, status, message }) => {
+          if (status === 'ok') {
+            this.items.filter(_item => _item !== item)
+            return true
+          }
+          else {
+            throw new Error(message)
+          }
+        })
+    }
+    return Promise.reject('item no existe en el carro')
   }
 }
