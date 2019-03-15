@@ -3,35 +3,56 @@ import Variant from './Variant'
 
 export default class Cart {
 
-  constructor() {
+  constructor(cart) {
     this.items = []
     this.created = null
-    this.legacy = null
-    this.get()
+    this.totalItems = 0
+    this.subtotal = 0
+    if (cart.items) {
+      this.remind(cart)
+    }
+    else {
+      this.get()
+    }
   }
 
   get() {
     fetch('/cart/get_total_cart/')
       .then(res => res.json())
-      .then(data => {
+      .then(({ total, items }) => {
         this.items = []
         this.created = Date.now()
-
-        this.legacy = data
+        this.totalItems = items
+        this.subtotal = total
       })
       .catch(error => {
         console.error(error)
       })
   }
 
-  add(item, quantity) {
+  remind(cart) {
+    this.items = cart.items.map(item => {
+      const { id, quantity, ...product } = item
+      return {
+        id,
+        product: new Product({ product }),
+        quantity
+      }
+    })
+    this.created = Date.now()
+    this.totalItems = cart.totalItems
+    this.subtotal = cart.subtotal
+  }
+
+  add(item, quantity, callback) {
     const variant = item instanceof Variant
     if (variant || item instanceof Product) {
-      return fetch(`/product/create/${item.id}?q=${quantity}`)
+      return fetch(`/product/create/${item[variant ? 'id' : 'variantId']}?q=${quantity}`)
         .then(res => res.json())
         .then(({ success, status, message }) => {
           if (status === 'ok') {
             const newItem = {
+              id: 0, // temporal
               [variant ? 'variant' : 'product']: item,
               quantity
             }

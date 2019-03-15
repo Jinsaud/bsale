@@ -6,9 +6,9 @@ import Cart from './Cart'
 
 class Bsale {
 
-  constructor({ config, products, collections }) {
+  constructor({ config, cart, products, collections }) {
     this.config = config
-    this.cart = new Cart
+    this.cart = new Cart(cart)
     this.version = '1.0.0'
     if (products.length) {
       this.products = products.map(product => new Product(product))
@@ -37,4 +37,4 @@ class Bsale {
   }
 }
 
-window.Bsale = new Bsale(window.INITIAL)
+window.Bsale = new Bsale(window.INIT)
