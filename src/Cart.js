@@ -44,7 +44,7 @@ export default class Cart {
     this.subtotal = cart.subtotal
   }
 
-  add(item, quantity, callback) {
+  add(item, quantity) {
     const variant = item instanceof Variant
     if (variant || item instanceof Product) {
       return fetch(`/product/create/${item[variant ? 'id' : 'variantId']}?q=${quantity}`)
@@ -52,7 +52,7 @@ export default class Cart {
         .then(({ success, status, message }) => {
           if (status === 'ok') {
             const newItem = {
-              id: 0, // temporal
+              id: null, // temporal
               [variant ? 'variant' : 'product']: item,
               quantity
             }
