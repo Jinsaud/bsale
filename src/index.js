@@ -1,26 +1,40 @@
+import 'promise/polyfill'
+import 'whatwg-fetch'
 import Product from './Product'
 import Collection from './Collection'
 import Cart from './Cart'
 
-const config = JSON.parse(document.head.querySelector('[name="bs-config"]').content)
+class Bsale {
 
-function tagmanager(event) {
-  if (typeof dataLayer !== 'undefined') {
-    dataLayer.push(event)
+  constructor({ config, cart, products, collections }) {
+    this.config = config
+    this.cart = new Cart(cart)
+    this.version = '1.0.0'
+    if (products.length) {
+      this.products = products.map(product => new Product(product))
+    }
+    if (collections.length) {
+      this.collections = collections.map(collection => new Collection(collection))
+    }
+    if (location.hostname.indexOf('bsalemarket.com') !== -1) {
+      this.dev = true
+    }
+    delete window.INITIAL
+  }
+
+  tagmanager(event) {
+    if (typeof dataLayer !== 'undefined') {
+      dataLayer.push(event)
+      this.dev && console.log('Tagmanager:', event)
+    }
+  }
+
+  pixel(event, data, custom) {
+    if (typeof fbq !== 'undefined') {
+      fbq(custom ? 'trackCustom' : 'track', event, data)
+      this.dev && console.log('Pixel:', { event: event, data: data })
+    }
   }
 }
 
-function pixel(event, data, custom) {
-  if (typeof fbq !== 'undefined') {
-    fbq(custom ? 'trackCustom' : 'track', event, data)
-  }
-}
-
-window.Bsale = {
-  config,
-  tagmanager,
-  pixel,
-  Product,
-  Collection,
-  Cart
-}
+window.Bsale = new Bsale(window.INIT)

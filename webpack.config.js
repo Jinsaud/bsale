@@ -1,6 +1,7 @@
 const path = require('path')
 
-module.exports = {
+module.exports = mode => ({
+  mode,
   entry: './src',
   output: {
     filename: 'Bsale.js',
@@ -12,5 +13,6 @@ module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader'
     }]
-  }
-}
+  },
+  devtool: 'source-map'
+})

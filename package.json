@@ -1,16 +1,21 @@
 {
   "name": "bsale",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/index.js",
+  "description": "Bsale.js file for market templates",
+  "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --config ./webpack.config.js --mode production --progress"
+    "dev": "node index.js development",
+    "build": "node index.js production"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.5",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "node-fetch": "^2.3.0",
+    "webpack": "^4.29.6"
+  },
+  "dependencies": {
+    "promise": "^8.0.2",
+    "whatwg-fetch": "^3.0.0"
   }
 }
